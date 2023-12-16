@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    restart: always
+    env_file:
+        - ./config/.env
+    depends_on:
+        - db
+    ports:
+        - "9999:9999"
+  db:
+    image: postgres:15
+    env_file:
+        - ./config/.env
+    restart: always
+    volumes:
+        - ./db_data/data:/var/lib/postgresql/data
+    ports:
+        - "5432:5432"
+  test_db:
+    image: postgres:15
+    env_file:
+        - ./config/.env
+    restart: always
+    volumes:
+        - ./db_data/data:/var/lib/postgresql/data
+        - ./sql/:/docker-entrypoint-initdb.d/
+    ports:
+        - "5433:5432"
